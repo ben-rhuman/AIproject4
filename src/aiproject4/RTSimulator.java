@@ -15,5 +15,5 @@ public class RTSimulator {
         RaceTrack rt = new RaceTrack(c);
         track = rt.getTrack();
     }
-
+    
 }

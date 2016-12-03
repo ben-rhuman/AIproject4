@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class RaceTrack {
 
@@ -15,7 +14,7 @@ public class RaceTrack {
     public RaceTrack(char c) {
         shape = c;
         readMap();
-        printTrack();
+        //printTrack();
         
     }
 
@@ -23,7 +22,6 @@ public class RaceTrack {
 
         String filePath = new File("").getAbsolutePath() + "/src/tracks/" + fileName(); //Creates the file path of the desired data set for windows
 
-        
         File file = new File(filePath);
 
         if (file.isFile()) {
@@ -85,6 +83,11 @@ public class RaceTrack {
     
     public char[][] getTrack(){
         return track;
+    }
+    
+    public void setTrack(char c){
+        this.shape = c;
+        readMap();
     }
 
 }
