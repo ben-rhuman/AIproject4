@@ -10,6 +10,6 @@ package policyPackage;
  * @author k28h885
  */
 public interface IPolicyAlgorithm {
-    public void ASK(int x, int y); //This wont stay void
+    public int ASK(int x, int y); //Returns a int representing a direction
     public void TELL(char[][] track); //This provides the agent with the track
 }

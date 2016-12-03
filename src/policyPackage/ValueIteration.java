@@ -14,7 +14,7 @@ public class ValueIteration implements IPolicyAlgorithm{
     public ValueIteration(){}
     
     @Override
-    public void ASK(int x, int y) {
+    public int ASK(int x, int y) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
