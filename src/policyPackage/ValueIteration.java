@@ -11,9 +11,15 @@ package policyPackage;
  */
 public class ValueIteration implements IPolicyAlgorithm{
 
+    public ValueIteration(){}
+    
     @Override
-    public void ASK() {
+    public void ASK(int x, int y) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
+    @Override
+    public void TELL(char[][] track) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
