@@ -3,6 +3,7 @@ package aiproject4;
 import tracks.RaceTrack;
 import java.lang.Math;
 import java.awt.geom.Line2D;
+import policyPackage.*;
 
 public class RTSimulator {
 
@@ -11,6 +12,9 @@ public class RTSimulator {
     public RTSimulator(char c) {
         
         readMap(c);
+        IPolicyAlgorithm p = new QLearning();
+        
+        p.TELL(track);
     }
 
     public void readMap(char c) {
