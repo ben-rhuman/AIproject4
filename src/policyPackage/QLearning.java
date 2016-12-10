@@ -31,8 +31,8 @@ public class QLearning implements IPolicyAlgorithm {
     }
 
     @Override
-    public int ASK(int x, int y) { //N = 1; NE = 2; E = 3; SE = 4; S = 5; SW = 6; W = 7; NW = 8
-        double maxUtility = 0;
+    public int ASK(int x, int y) { //N = 0; NE = 1; E = 2; SE = 3; S = 4; SW = 5; W = 6; NW = 7
+        double maxUtility = Double.NEGATIVE_INFINITY;
         int direction = 0;
         for (int i = 0; i < DIRECTIONS; i++) {
             if (QTable[x][y][i] > maxUtility) {
@@ -51,30 +51,33 @@ public class QLearning implements IPolicyAlgorithm {
         final long NANOSEC_PER_SEC = 1000l * 1000 * 1000;
 
         long startTime = System.nanoTime();
-        while ((System.nanoTime() - startTime) < .5 * 60 * NANOSEC_PER_SEC) {
-            createPolicy();
-        }
         
-        PrintStream out;
-        try {
-            out = new PrintStream(new FileOutputStream("L-Track-Policy.txt"));
-            System.setOut(out);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(QLearning.class.getName()).log(Level.SEVERE, null, ex);
+        while ((System.nanoTime() - startTime) < 2.0 * 60 * NANOSEC_PER_SEC) {
+             createPolicy();
         }
+       
+////        
+////        PrintStream out;
+////        try {
+////            out = new PrintStream(new FileOutputStream("L-Track-Policy.txt"));
+////            System.setOut(out);
+////        } catch (FileNotFoundException ex) {
+////            Logger.getLogger(QLearning.class.getName()).log(Level.SEVERE, null, ex);
+////        }
         
-        for (int i = 0; i < QTable.length; i++) {
-            for (int j = 0; j < QTable[i].length; j++) {
-                //if (track[i][j] != '#') {
-                    //System.out.println("Position: (" + i + "," + j + ")");
-                    //System.out.println("Track Value: " + track[i][j]);
-                    for (int k = 0; k < DIRECTIONS; k++) {
-                        //System.out.println("    Direction " + k + ": " + QTable[i][j][k]);
-                        System.out.print(QTable[i][j][k] + ",");
-                    }
-                //}
-            }
-        }
+//        for (int i = 0; i < QTable.length; i++) {
+//            for (int j = 0; j < QTable[i].length; j++) {
+//                if (track[i][j] != '#') {
+//                    System.out.println("Position: (" + i + "," + j + ")");
+//                    //System.out.println("Track Value: " + track[i][j]);
+//                    for (int k = 0; k < DIRECTIONS; k++) {
+//                        System.out.println("    Direction " + k + ": " + QTable[i][j][k]);
+//                        //System.out.print(QTable[i][j][k] + ",");
+//                    }
+//                }
+//            }
+//            
+//        }
     }
 
     private void createPolicy() {
@@ -116,7 +119,7 @@ public class QLearning implements IPolicyAlgorithm {
                         absorbed = true;
                         break;
                     case '#':
-                        nextUtility = 0.0;
+                        nextUtility = -0.5;
                         //nextPos.y = pos.y;
                         //nextPos.x = pos.x;
                         //System.out.println("HIT A WALL");
