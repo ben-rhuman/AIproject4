@@ -8,7 +8,7 @@ import java.util.Random;
 import policyPackage.IPolicyAlgorithm;
 import policyPackage.QLearning;
 import policyPackage.ValueIteration;
-
+import java.util.Random;
 public class RTSimulator {
 
     private char[][] track;                 //the racetrack
@@ -60,17 +60,30 @@ public class RTSimulator {
     public void drive() {
 
         while (!done) {
-            int move = ipa.ASK(racer.getXPos(), racer.getYPos());
             
-            Coordinate a = getAcceleration(move);
+            int move = ipa.ASK(racer.getYPos(), racer.getXPos());
+            
+            Coordinate a = null;
+            if (crashType == 1) {
+                a = getSafeAcceleration(move);
+            } else {
+                a = getAcceleration(move);
+            }
+            
+            printTrack();
+            System.out.println("move: " + move);
+            System.out.println("going to a.x: "+ a.x + " a.y: " + a.y);
+            
+            //add the acceleration
             racer.addAcceleration(a.x, a.y);
-            
-            
+
             if (checkPassFinish()) { //check if the racer passed the finish line
                 done = true;
                 return;
-            } 
+            }
 
+            
+            
             if (!collision()) { //check if the racer did not crash
                 //update the position and the track
                 int newXPos = racer.getXVel() + racer.getXPos();
@@ -78,12 +91,10 @@ public class RTSimulator {
                 Coordinate c = new Coordinate(newXPos, newYPos);
                 setRacer(c);
             }
-
+            
         }
 
     }
-    
-    
 
     public Coordinate getRandomStart() { //get the coordinate of a random starting point
         Random rand = new Random();
@@ -167,37 +178,93 @@ public class RTSimulator {
         }
         return false;
     }
-    
-    public Coordinate getAcceleration( int move){
+
+    public Coordinate getAcceleration(int move) {
         Coordinate a = null;
-        switch(move){
-            case(1): //N
-                a =  new Coordinate(0,-1);
+        switch (move) {
+            case (0): //N
+                a = new Coordinate(0, -1);
                 break;
-            case(2): //NE
-                a =  new Coordinate(1,-1);
+            case (1): //NE
+                a = new Coordinate(1, -1);
                 break;
-            case(3): //E
-                a =  new Coordinate(1,0);
+            case (2): //E
+                a = new Coordinate(1, 0);
                 break;
-            case(4): //SE
-                a =  new Coordinate(1,1);
+            case (3): //SE
+                a = new Coordinate(1, 1);
                 break;
-            case(5): //S
-                a =  new Coordinate(1,0);
+            case (4): //S
+                a = new Coordinate(1, 0);
                 break;
-            case(6): //SW
-                a =  new Coordinate(-1,1);
+            case (5): //SW
+                a = new Coordinate(-1, 1);
                 break;
-            case(7): //W
-                a =  new Coordinate(-1,0);
+            case (6): //W
+                a = new Coordinate(-1, 0);
                 break;
-            case(8): //NW
-                a =  new Coordinate(-1,-1);
+            case (7): //NW
+                a = new Coordinate(-1, -1);
                 break;
-            default: 
-                a = new Coordinate(0,0);
+            default:
+                a = new Coordinate(0, 0);
                 break;
+        }
+        return a;
+    }
+
+    public Coordinate getSafeAcceleration(int move) { //keep an acceleration that will follow the path as straightforward as possible
+        Coordinate a = null;
+        if (racer.getXVel() != 0 || racer.getYVel() != 0) { //if the velocity is not 0
+            Coordinate old = racer.getPrevAccel();
+            //find an acceleration that will make it 0
+            if (old.x == 0 && old.y == -1) {
+                a = new Coordinate(0, 1);
+            } else if (old.x == 1 && old.y == -1) {
+                a = new Coordinate(-1, 1);
+            } else if (old.x == 1 && old.y == 0) {
+                a = new Coordinate(-1, 0);
+            } else if (old.x == 1 && old.y == 1) {
+                a = new Coordinate(-1, -1);
+            } else if (old.x == 0 && old.y == 1) {
+                a = new Coordinate(0, -1);
+            } else if (old.x == -1 && old.y == 1) {
+                a = new Coordinate(1, -1);
+            } else if (old.x == -1 && old.y == 0) {
+                a = new Coordinate(1, 0);
+            } else if (old.x == -1 && old.y == -1) {
+                a = new Coordinate(1, 1);
+            }
+        } else { //if acceleration is not 0 find one that will follow the path
+            switch (move) {
+                case (0): //N
+                    a = new Coordinate(0, -1);
+                    break;
+                case (1): //NE
+                    a = new Coordinate(1, -1);
+                    break;
+                case (2): //E
+                    a = new Coordinate(1, 0);
+                    break;
+                case (3): //SE
+                    a = new Coordinate(1, 1);
+                    break;
+                case (4): //S
+                    a = new Coordinate(0, 1);
+                    break;
+                case (5): //SW
+                    a = new Coordinate(-1, 1);
+                    break;
+                case (6): //W
+                    a = new Coordinate(-1, 0);
+                    break;
+                case (7): //NW
+                    a = new Coordinate(-1, -1);
+                    break;
+                default:
+                    a = new Coordinate(0, 0);
+                    break;
+            }
         }
         return a;
     }
@@ -256,67 +323,72 @@ public class RTSimulator {
     }
 
     public Coordinate spotNearCrash(int x, int y) { //return the closest spot on the track next to the crashsite
-        char[] safe = {'.', 'F', 'S'};
+        char[] safe = {'.', 'F', 'S','R'};
+        ArrayList<Coordinate> list = new ArrayList<>();
         Coordinate spot = null;
 
         for (int i = 0; i < safe.length; i++) {
             try {
                 if (track[y + 1][x] == safe[i]) {
-                    spot = new Coordinate(x, y + 1);
-                    return spot;
+                    Coordinate c = new Coordinate(x, y + 1);
+                    list.add(c);
                 }
             } catch (IndexOutOfBoundsException e) {
             }
             try {
                 if (track[y - 1][x] == safe[i]) {
-                    spot = new Coordinate(x, y - 1);
-                    return spot;
+                    Coordinate c = new Coordinate(x, y - 1);
+                    list.add(c);
                 }
             } catch (IndexOutOfBoundsException e) {
             }
             try {
                 if (track[y][x + 1] == safe[i]) {
-                    spot = new Coordinate(x + 1, y);
-                    return spot;
+                    Coordinate c = new Coordinate(x + 1, y);
+                    list.add(c);
                 }
             } catch (IndexOutOfBoundsException e) {
             }
             try {
                 if (track[y][x - 1] == safe[i]) {
-                    spot = new Coordinate(x - 1, y);
-                    return spot;
+                    Coordinate c = new Coordinate(x - 1, y);
+                    list.add(c);
                 }
             } catch (IndexOutOfBoundsException e) {
             }
             try {
                 if (track[y + 1][x + 1] == safe[i]) {
-                    spot = new Coordinate(x + 1, y + 1);
-                    return spot;
+                    Coordinate c = new Coordinate(x + 1, y + 1);
+                    list.add(c);
                 }
             } catch (IndexOutOfBoundsException e) {
             }
             try {
                 if (track[y + 1][x - 1] == safe[i]) {
-                    spot = new Coordinate(x - 1, y + 1);
-                    return spot;
+                    Coordinate c = new Coordinate(x - 1, y + 1);
+                    list.add(c);
                 }
             } catch (IndexOutOfBoundsException e) {
             }
             try {
                 if (track[y - 1][x + 1] == safe[i]) {
-                    spot = new Coordinate(x + 1, y - 1);
-                    return spot;
+                    Coordinate c = new Coordinate(x + 1, y - 1);
+                    list.add(c);
                 }
             } catch (IndexOutOfBoundsException e) {
             }
             try {
                 if (track[y - 1][x - 1] == safe[i]) {
-                    spot = new Coordinate(x - 1, y - 1);
-                    return spot;
+                    Coordinate c = new Coordinate(x - 1, y - 1);
+                    list.add(c);
                 }
             } catch (IndexOutOfBoundsException e) {
             }
-        }
+        } 
+        Random r = new Random();
+        int index = r.nextInt(list.size());
+        spot = list.get(index);
+        
         return spot;
     }
 
@@ -381,6 +453,7 @@ public class RTSimulator {
     }
 
     public void printTrack() {
+        System.out.println("");
         for (int i = 0; i < track.length; i++) {
             for (int j = 0; j < track[0].length; j++) {
                 System.out.print(track[i][j]);
