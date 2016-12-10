@@ -60,12 +60,16 @@ public class RTSimulator {
     public void drive() {
 
         while (!done) {
-            //racer.addAcceleration(0,0);
-
+            int move = ipa.ASK(racer.getXPos(), racer.getYPos());
+            
+            Coordinate a = getAcceleration(move);
+            racer.addAcceleration(a.x, a.y);
+            
+            
             if (checkPassFinish()) { //check if the racer passed the finish line
                 done = true;
                 return;
-            }
+            } 
 
             if (!collision()) { //check if the racer did not crash
                 //update the position and the track
@@ -78,6 +82,8 @@ public class RTSimulator {
         }
 
     }
+    
+    
 
     public Coordinate getRandomStart() { //get the coordinate of a random starting point
         Random rand = new Random();
@@ -160,6 +166,40 @@ public class RTSimulator {
             }
         }
         return false;
+    }
+    
+    public Coordinate getAcceleration( int move){
+        Coordinate a = null;
+        switch(move){
+            case(1): //N
+                a =  new Coordinate(0,-1);
+                break;
+            case(2): //NE
+                a =  new Coordinate(1,-1);
+                break;
+            case(3): //E
+                a =  new Coordinate(1,0);
+                break;
+            case(4): //SE
+                a =  new Coordinate(1,1);
+                break;
+            case(5): //S
+                a =  new Coordinate(1,0);
+                break;
+            case(6): //SW
+                a =  new Coordinate(-1,1);
+                break;
+            case(7): //W
+                a =  new Coordinate(-1,0);
+                break;
+            case(8): //NW
+                a =  new Coordinate(-1,-1);
+                break;
+            default: 
+                a = new Coordinate(0,0);
+                break;
+        }
+        return a;
     }
 
     public void crash(Coordinate c) {
