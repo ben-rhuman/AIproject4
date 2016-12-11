@@ -19,9 +19,9 @@ public class AIproject4 {
 
     public static void main(String[] args) throws ExecutionException, TimeoutException {
         
-        IPolicyAlgorithm p = new QLearning();
+        IPolicyAlgorithm q = new QLearning();
         //IPolicyAlgorithm v = new ValueIteration();
-        RTSimulator rt = new RTSimulator('r',0,p);
+        RTSimulator rt = new RTSimulator('r',1,q);
 //        
 //        char[][] track = {{'#','#','#','#','#','#'},{'#','S','.','.','.','#'},{'#','.','.','.','F','#'},{'#','#','#','#','#','#'}};
 //        for(int i = 0; i < track.length; i++){

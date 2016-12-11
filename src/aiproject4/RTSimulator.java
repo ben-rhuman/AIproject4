@@ -38,7 +38,8 @@ public class RTSimulator {
         setupCar();         //place the car on the starting line
         printTrack();
 
-        ////////reset the accel not failing
+        ////////reset the accel not failing in racer class
+        
         drive();            //drive through the map
         printTrack();
 
@@ -162,10 +163,10 @@ public class RTSimulator {
             double ryp = (double) racer.getYPos();
             double rxpv = (double) (racer.getXPos() + racer.getXVel());
             double rypv = (double) (racer.getYPos() + racer.getYVel());
-            double wallx1 = ((double) (walls.get(i).x)) - .5;
-            double wally1 = ((double) (walls.get(i).y)) - .5;
-            double wallx2 = ((double) (walls.get(i).x)) + .5;
-            double wally2 = ((double) (walls.get(i).y)) + .5;
+            double wallx1 = ((double) (walls.get(i).x)) - .49;
+            double wally1 = ((double) (walls.get(i).y)) - .49;
+            double wallx2 = ((double) (walls.get(i).x)) + .49;
+            double wally2 = ((double) (walls.get(i).y)) + .49;
 
             crashed1 = Line2D.linesIntersect(rxp, ryp, rxpv, rypv, wallx1, wally1, wallx2, wally2);
             crashed2 = Line2D.linesIntersect(rxp, ryp, rxpv, rypv, wallx2, wally1, wallx1, wally2);
