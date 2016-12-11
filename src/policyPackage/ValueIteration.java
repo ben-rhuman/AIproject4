@@ -33,7 +33,7 @@ public class ValueIteration implements IPolicyAlgorithm {
         V = Double.NEGATIVE_INFINITY;
         for (int i = -1; i <= 1; i++) {
             for (int j = -1; j <= 1; j++) {
-                if (table[x + i][y + j] >= V) {
+                if (table[x + i][y + j] > V) {
                     if (i == 0 && j == 0) {
                         //Do nothing
                     } else {
@@ -153,7 +153,7 @@ public class ValueIteration implements IPolicyAlgorithm {
                     case -1:
                         return 6;
                     case 0:
-                        System.out.println("ERROR.getDirection(): Invalid Direction");
+                        System.out.println("ERROR.getDirection(): Invalid Direction 0-0");
                         break;
                     case 1:
                         return 2;
@@ -170,7 +170,7 @@ public class ValueIteration implements IPolicyAlgorithm {
                 }
                 break;
             default:
-                System.out.println("ERROR.getDirection(): Invalid Direction");
+                System.out.println("ERROR.getDirection(): Default");
                 break;
         }
         return -1;
