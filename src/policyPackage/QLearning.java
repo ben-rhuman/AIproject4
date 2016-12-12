@@ -51,7 +51,7 @@ public class QLearning implements IPolicyAlgorithm {
         final long NANOSEC_PER_SEC = 1000l * 1000 * 1000;
 
         long startTime = System.nanoTime();
-        while ((System.nanoTime() - startTime) < .5 * 60 * NANOSEC_PER_SEC) {
+        while ((System.nanoTime() - startTime) < 180 * 60 * NANOSEC_PER_SEC) {
             createPolicy();
         }
         
