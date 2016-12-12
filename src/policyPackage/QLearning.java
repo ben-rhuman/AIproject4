@@ -1,8 +1,12 @@
 package policyPackage;
 
 import aiproject4.Coordinate;
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +29,7 @@ public class QLearning implements IPolicyAlgorithm {
     //Equation values
     final double ALPHA = 0.5; //Learning Rate
     final double GAMMA = 0.9; //Discount Factor
-    final double REWARD = -0.04;
+    final double REWARD = -0.0002;//-0.04;
 
     public QLearning() {
     }
@@ -34,11 +38,28 @@ public class QLearning implements IPolicyAlgorithm {
     public int ASK(int x, int y) { //N = 1; NE = 2; E = 3; SE = 4; S = 5; SW = 6; W = 7; NW = 8
         double maxUtility = Double.NEGATIVE_INFINITY;
         int direction = 0;
-        for (int i = 0; i < DIRECTIONS; i++) {
-            if (QTable[x][y][i] > maxUtility) {
-                maxUtility = QTable[x][y][i];
-                direction = i;
-            }
+        Coordinate next;
+        Coordinate current = new Coordinate(y, x);
+
+//        if (track[x][y] == 'S') {
+//            System.out.println("WTF!!!!!");
+//            for (int i = -1; i <= 1; i++) {
+//                for (int j = -1; j <= 1; j++) {
+//                    
+//                    if (track[x + i][y + j] == '.') {
+//                        direction = getDirection(i,j);
+//                        System.out.println("GetDirection: " + direction);
+//                    }
+//                }
+//            }
+//        } else {
+            for (int i = 0; i < DIRECTIONS; i++) {
+                next = getNextPosition(i, current);
+                if (QTable[x][y][i] > maxUtility && track[next.y][next.x] != '#') {
+                    maxUtility = QTable[x][y][i];
+                    direction = i;
+                }
+            //}
         }
         return direction;
     }
@@ -47,34 +68,35 @@ public class QLearning implements IPolicyAlgorithm {
     public void TELL(char[][] track) {
         this.track = track;
         QTable = new double[track.length][track[0].length][DIRECTIONS];
-
+        setWalls();
+        
         final long NANOSEC_PER_SEC = 1000l * 1000 * 1000;
 
         long startTime = System.nanoTime();
-        while ((System.nanoTime() - startTime) < .25 * 60 * NANOSEC_PER_SEC) {
+        while ((System.nanoTime() - startTime) < 5 * 60 * NANOSEC_PER_SEC) {
             createPolicy();
         }
+//        loadPolicy();
 
-        PrintStream out;
-        try {
-            out = new PrintStream(new FileOutputStream("L-Track-Policy.txt"));
-            System.setOut(out);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(QLearning.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        for (int i = 0; i < QTable.length; i++) {
-            for (int j = 0; j < QTable[i].length; j++) {
-                //if (track[i][j] != '#') {
-                //System.out.println("Position: (" + i + "," + j + ")");
-                //System.out.println("Track Value: " + track[i][j]);
-                for (int k = 0; k < DIRECTIONS; k++) {
-                    //System.out.println("    Direction " + k + ": " + QTable[i][j][k]);
-                    System.out.print(QTable[i][j][k] + ",");
-                }
-                //}
-            }
-        }
+//        PrintStream out;
+//        try {
+//            out = new PrintStream(new FileOutputStream("L-Track-Policy.txt"));
+//            System.setOut(out);
+//        } catch (FileNotFoundException ex) {
+//            Logger.getLogger(QLearning.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        for (int i = 0; i < QTable.length; i++) {
+//            for (int j = 0; j < QTable[i].length; j++) {
+//                if (track[i][j] != '#') {
+//                    System.out.println("Position: (" + i + "," + j + ")");
+//                    System.out.println("Track Value: " + track[i][j]);
+//                    for (int k = 0; k < DIRECTIONS; k++) {
+//                        System.out.println("    Direction " + k + ": " + QTable[i][j][k]);
+//                        //System.out.print(QTable[i][j][k] + ",");
+//                    }
+//                }
+//            }
+//        }
 
     }
 
@@ -117,7 +139,7 @@ public class QLearning implements IPolicyAlgorithm {
                     absorbed = true;
                     break;
                 case '#':
-                    nextUtility = 0.0;
+                    nextUtility = 0.0;//-0.10;
                     //nextPos.y = pos.y;
                     //nextPos.x = pos.x;
                     //System.out.println("HIT A WALL");
@@ -208,4 +230,92 @@ public class QLearning implements IPolicyAlgorithm {
 //            }
 //        }
 //    }
+
+    private void setWalls() {
+        for (int i = 0; i < track.length; i++) {
+            for (int j = 0; j < track[i].length; j++) {
+                if (track[i][j] == '#' || track[i][j] == 'S' || track[i][j] == 'R') {
+                    for (int k = 0; k < DIRECTIONS; k++) {
+                        QTable[i][j][k] = -1.0;
+                    }
+                }
+            }
+        }
+    }
+
+    private void loadPolicy() {
+        String filePath = "r-Track-Policy.txt"; //Creates the file path of the desired data set for windows
+
+        File file = new File(filePath);
+
+        if (file.isFile()) {
+            BufferedReader inputStream = null;
+            try {
+                inputStream = new BufferedReader(new FileReader(file));
+
+                String line = inputStream.readLine();
+                String[] tokens = line.split(",");
+
+                int t = 0;
+                for (int i = 0; i < QTable.length; i++) {
+                    for (int j = 0; j < QTable[i].length; j++) {
+                        for (int k = 0; k < DIRECTIONS; k++) {
+                            QTable[i][j][k] = Double.parseDouble(tokens[t]);
+                            t++;
+                        }
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                System.out.println("file not found");;
+            } catch (IOException ex) {
+
+            }
+        } else {
+            System.out.println("File not found");
+        }
+
+        //L-track 11,17
+        //O-Track 25,25
+        //R-Track 28,30
+    }
+    
+     private int getDirection(int x, int y) {
+        switch (x) {
+            case -1:
+                switch (y) {
+                    case -1:
+                        return 7;
+                    case 0:
+                        return 0;
+                    case 1:
+                        return 1;
+                }
+                break;
+            case 0:
+                switch (y) {
+                    case -1:
+                        return 6;
+                    case 0:
+                        System.out.println("ERROR.getDirection(): Invalid Direction 0-0");
+                        break;
+                    case 1:
+                        return 2;
+                }
+                break;
+            case 1:
+                switch (y) {
+                    case -1:
+                        return 5;
+                    case 0:
+                        return 4;
+                    case 1:
+                        return 3;
+                }
+                break;
+            default:
+                System.out.println("ERROR.getDirection(): Default");
+                break;
+        }
+        return -1;
+    }
 }
