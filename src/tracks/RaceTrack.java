@@ -58,7 +58,7 @@ public class RaceTrack {
         } else {
             System.out.println("File not found");
         }
-        printTrack();
+        //printTrack();
     }
 
     public String fileName() {

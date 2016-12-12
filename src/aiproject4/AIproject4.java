@@ -8,6 +8,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import policyPackage.*;
 
+import policyPackage.IPolicyAlgorithm;
+import policyPackage.QLearning;
+
 /**
  *
  * @author Ben
@@ -15,9 +18,11 @@ import policyPackage.*;
 public class AIproject4 {
 
     public static void main(String[] args) throws ExecutionException, TimeoutException {
-
-        RTSimulator rt = new RTSimulator('o');
-//        IPolicyAlgorithm p = new QLearning();
+        
+        IPolicyAlgorithm q = new QLearning();
+        //IPolicyAlgorithm v = new ValueIteration();
+        RTSimulator rt = new RTSimulator('r',1,q);
+//        
 //        char[][] track = {{'#','#','#','#','#','#'},{'#','S','.','.','.','#'},{'#','.','.','.','F','#'},{'#','#','#','#','#','#'}};
 //        for(int i = 0; i < track.length; i++){
 //            for(int j = 0; j < track[0].length; j++){
