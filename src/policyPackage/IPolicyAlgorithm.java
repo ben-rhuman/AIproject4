@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package policyPackage;
 
 /**
  *
- * @author k28h885
+ * Group 22: Ben Rhuman, Isaac Sotelo, Danny Kumpf
  */
 public interface IPolicyAlgorithm {
     public int ASK(int x, int y); //Returns a int representing a direction

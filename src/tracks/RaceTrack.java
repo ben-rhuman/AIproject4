@@ -5,6 +5,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+/**
+ *
+ * Group 22: Ben Rhuman, Isaac Sotelo, Danny Kumpf
+ */
 
 public class RaceTrack {
 

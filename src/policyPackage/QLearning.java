@@ -16,12 +16,12 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author k28h885
+ * Group 22: Ben Rhuman, Isaac Sotelo, Danny Kumpf
  */
 public class QLearning implements IPolicyAlgorithm {
 
     //Exploration values
-    final double EXPLORATION_FACTOR = 0.8;
+    final double EXPLORATION_FACTOR = 0.8; //This allows the agent to stray from the known policy to better develop the rest of the policy
     char[][] track;
     double[][][] QTable;
     final int DIRECTIONS = 8;
@@ -48,7 +48,7 @@ public class QLearning implements IPolicyAlgorithm {
                     direction = i;
                 }
         }
-        return direction;
+        return direction; //Returns the direction the policy tells it to go
     }
 
     @Override
@@ -60,9 +60,14 @@ public class QLearning implements IPolicyAlgorithm {
         final long NANOSEC_PER_SEC = 1000l * 1000 * 1000;
 
         long startTime = System.nanoTime();
-        while ((System.nanoTime() - startTime) < .15 * 60 * NANOSEC_PER_SEC) {
+        while ((System.nanoTime() - startTime) < 15 * 60 * NANOSEC_PER_SEC) {  //Runs the policy for a given amount of time
             createPolicy();
         }
+        
+        
+        //This was used for making txt files containing policy information
+        //so that they wouldnt need to be calculated more then once.
+        
 //        loadPolicy();
 
 //        PrintStream out;
@@ -88,14 +93,11 @@ public class QLearning implements IPolicyAlgorithm {
     }
 
     private void createPolicy() {
-        //while(!converged) better estimate of policy
-        //for (int i = 0; i < 10000; i++) {
+
         Coordinate pos = randomState();
         Random r = new Random();
         boolean absorbed = false;
         while (!absorbed) {
-            //System.out.println("Position: (" + pos.y + "," + pos.x + ")");
-            //System.out.println("Track value: " + track[pos.y][pos.x]);
             double maxUtility = Double.NEGATIVE_INFINITY;
             int bestDirection = 0;
             for (int j = 0; j < DIRECTIONS; j++) { //Find the maxUtility direction
@@ -108,11 +110,8 @@ public class QLearning implements IPolicyAlgorithm {
             if (EXPLORATION_FACTOR < r.nextDouble()) { //Gives the algorithm some non-deterministic movement
                 bestDirection = r.nextInt(DIRECTIONS);
             }
-            //System.out.println("bestDirection: " + bestDirection);
 
             Coordinate nextPos = getNextPosition(bestDirection, pos);
-            //System.out.println("Next Position: (" + nextPos.y + "," + nextPos.x + ")");
-            //System.out.println("Track value: " + track[nextPos.y][nextPos.x]);
 
             Double nextUtility = Double.NEGATIVE_INFINITY;
 
@@ -127,9 +126,6 @@ public class QLearning implements IPolicyAlgorithm {
                     break;
                 case '#':
                     nextUtility = 0.0;//-0.10;
-                    //nextPos.y = pos.y;
-                    //nextPos.x = pos.x;
-                    //System.out.println("HIT A WALL");
                     break;
                 default:
                     for (int j = 0; j < DIRECTIONS; j++) {
@@ -140,19 +136,16 @@ public class QLearning implements IPolicyAlgorithm {
                     break;
             }
 
-            QTable[pos.y][pos.x][bestDirection] += ALPHA * (REWARD + GAMMA * nextUtility - QTable[pos.y][pos.x][bestDirection]);
+            QTable[pos.y][pos.x][bestDirection] += ALPHA * (REWARD + GAMMA * nextUtility - QTable[pos.y][pos.x][bestDirection]); //Q-Learning equation that calculated the Utility of going a given direction
 
             if (track[nextPos.y][nextPos.x] != '#') {
-                //System.out.println("Reset Pos");
                 pos.y = nextPos.y;
                 pos.x = nextPos.x;
-                //System.out.println("Position: (" + pos.y + "," + pos.x + ")");
             }
         }
-        //}
     }
 
-    private Coordinate randomState() {
+    private Coordinate randomState() { //This picks a new starting point for the algorithm anytime an absorbtion state is achieved.
         Random r = new Random();
         Coordinate pos = new Coordinate(0, 0);
 
@@ -160,11 +153,10 @@ public class QLearning implements IPolicyAlgorithm {
             pos.y = r.nextInt(track.length);
             pos.x = r.nextInt(track[0].length);
         } while (track[pos.y][pos.x] != '.');
-        //System.out.println("Track value: "+track[pos.y][pos.x]);
         return pos;
     }
 
-    private Coordinate getNextPosition(int direction, Coordinate curPos) {
+    private Coordinate getNextPosition(int direction, Coordinate curPos) { //Provides the next location based off of a given direction
         Coordinate next = new Coordinate(curPos.x, curPos.y);
         switch (direction) {
             case 0:
@@ -201,7 +193,7 @@ public class QLearning implements IPolicyAlgorithm {
         return next;
     }
 
-    private void setWalls() {
+    private void setWalls() { //Sets the walls and start line to -1.0 utility
         for (int i = 0; i < track.length; i++) {
             for (int j = 0; j < track[i].length; j++) {
                 if (track[i][j] == '#' || track[i][j] == 'S' || track[i][j] == 'R') {
@@ -247,45 +239,5 @@ public class QLearning implements IPolicyAlgorithm {
         //L-track 11,17
         //O-Track 25,25
         //R-Track 28,30
-    }
-    
-     private int getDirection(int x, int y) {
-        switch (x) {
-            case -1:
-                switch (y) {
-                    case -1:
-                        return 7;
-                    case 0:
-                        return 0;
-                    case 1:
-                        return 1;
-                }
-                break;
-            case 0:
-                switch (y) {
-                    case -1:
-                        return 6;
-                    case 0:
-                        System.out.println("ERROR.getDirection(): Invalid Direction 0-0");
-                        break;
-                    case 1:
-                        return 2;
-                }
-                break;
-            case 1:
-                switch (y) {
-                    case -1:
-                        return 5;
-                    case 0:
-                        return 4;
-                    case 1:
-                        return 3;
-                }
-                break;
-            default:
-                System.out.println("ERROR.getDirection(): Default");
-                break;
-        }
-        return -1;
     }
 }

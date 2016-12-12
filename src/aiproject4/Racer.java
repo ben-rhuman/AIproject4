@@ -1,5 +1,9 @@
 package aiproject4;
 
+/**
+ *
+ * Group 22: Ben Rhuman, Isaac Sotelo, Danny Kumpf
+ */
 
 public class Racer{
     private int xVelocity; //racer's velocity

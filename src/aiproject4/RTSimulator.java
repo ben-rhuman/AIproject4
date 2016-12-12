@@ -10,6 +10,10 @@ import policyPackage.QLearning;
 import policyPackage.ValueIteration;
 import java.util.Random;
 
+/**
+ *
+ * Group 22: Ben Rhuman, Isaac Sotelo, Danny Kumpf
+ */
 public class RTSimulator {
 
     private char[][] track;                 //the racetrack

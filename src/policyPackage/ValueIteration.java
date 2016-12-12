@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package policyPackage;
 
 /**
  *
- * @author k28h885
+ * Group 22: Ben Rhuman, Isaac Sotelo, Danny Kumpf
  */
 import aiproject4.Coordinate;
 import java.lang.Math;
@@ -55,7 +51,7 @@ public class ValueIteration implements IPolicyAlgorithm {
         }
         lastX = bestX;
         lastY = bestY;
-        return getDirection(bestX, bestY);
+        return getDirection(bestX, bestY); //returns the direction that will maximize the next state's utility
     }
 
     @Override
@@ -126,8 +122,6 @@ public class ValueIteration implements IPolicyAlgorithm {
                         break;
                     case 'F':
                         table[i][j] = 100.0;
-                        //refPos.x = i;   //Why are these here -Ben
-                        //refPos.y = j;
                         break;
                     case 'S':
                         table[i][j] = -100.0;
@@ -179,7 +173,7 @@ public class ValueIteration implements IPolicyAlgorithm {
         return -1;
     }
 
-    private void printMap() {
+    private void printMap() { //Prints out the track
         for (int i = 0; i < track.length; i++) {
             for (int j = 0; j < track[0].length; j++) {
                 System.out.print(track[i][j]);
@@ -189,7 +183,7 @@ public class ValueIteration implements IPolicyAlgorithm {
 
     }
 
-    public void printTable() {
+    public void printTable() { //Prints out the Value iteration table. Used for testing
         for (int i = 0; i < table.length; i++) {
             for (int j = 0; j < table[0].length; j++) {
                 System.out.printf("%.4f", table[i][j]);
