@@ -20,17 +20,11 @@ public class AIproject4 {
     public static void main(String[] args) throws ExecutionException, TimeoutException {
         
         IPolicyAlgorithm q = new QLearning();
-        //IPolicyAlgorithm v = new ValueIteration();
-        RTSimulator rt = new RTSimulator('r',1,q);
-//        
-//        char[][] track = {{'#','#','#','#','#','#'},{'#','S','.','.','.','#'},{'#','.','.','.','F','#'},{'#','#','#','#','#','#'}};
-//        for(int i = 0; i < track.length; i++){
-//            for(int j = 0; j < track[0].length; j++){
-//                System.out.print(track[i][j]);
-//            }
-//            System.out.println("");
-//        }
-//        p.TELL(track);
+        IPolicyAlgorithm v = new ValueIteration();
+        //RTSimulator rt = new RTSimulator('o',0,q);
+        //RTSimulator rt = new RTSimulator('l',0,q);
+        RTSimulator rt = new RTSimulator('l',0,v);
+        
 
     }
 

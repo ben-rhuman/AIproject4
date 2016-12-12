@@ -9,6 +9,7 @@ import policyPackage.IPolicyAlgorithm;
 import policyPackage.QLearning;
 import policyPackage.ValueIteration;
 import java.util.Random;
+
 public class RTSimulator {
 
     private char[][] track;                 //the racetrack
@@ -39,9 +40,10 @@ public class RTSimulator {
         printTrack();
 
         ////////reset the accel not failing in racer class
-        
         drive();            //drive through the map
         printTrack();
+        System.out.println("Finished");
+        System.out.println("Total Race Time: " + time);
 
     }
 
@@ -61,20 +63,49 @@ public class RTSimulator {
     public void drive() {
 
         while (!done) {
-            
+
             int move = ipa.ASK(racer.getYPos(), racer.getXPos());
-            
+            time++;
             Coordinate a = null;
             if (crashType == 1) {
                 a = getSafeAcceleration(move);
             } else {
                 a = getAcceleration(move);
             }
-            
+
             printTrack();
-            System.out.println("move: " + move);
-            System.out.println("going to a.x: "+ a.x + " a.y: " + a.y);
             
+            
+            System.out.print("Next Move: ");
+            switch (move) {
+                case 0:
+                    System.out.print("N");
+                    break;
+                case 1:
+                    System.out.print("NE");
+                    break;
+                case 2:
+                    System.out.print("E");
+                    break;
+                case 3:
+                    System.out.print("SE");
+                    break;
+                case 4:
+                    System.out.print("S");
+                    break;
+                case 5:
+                    System.out.print("SW");
+                    break;
+                case 6:
+                    System.out.print("W");
+                    break;
+                case 7:
+                    System.out.print("NW");
+                    break;
+            }
+            System.out.println("");
+            System.out.println("Acceleration: X " + a.x + " Y " + a.y);
+
             //add the acceleration
             racer.addAcceleration(a.x, a.y);
 
@@ -83,8 +114,6 @@ public class RTSimulator {
                 return;
             }
 
-            
-            
             if (!collision()) { //check if the racer did not crash
                 //update the position and the track
                 int newXPos = racer.getXVel() + racer.getXPos();
@@ -92,7 +121,7 @@ public class RTSimulator {
                 Coordinate c = new Coordinate(newXPos, newYPos);
                 setRacer(c);
             }
-            
+
         }
 
     }
@@ -143,7 +172,7 @@ public class RTSimulator {
             finished2 = Line2D.linesIntersect(rxp, ryp, rxpv, rypv, finishx2, finishy1, finishx1, finishy2);
 
             if (finished1 || finished2) { //if any of the finish spots were intersected
-                System.out.println("finished yeeeeeeee");
+                
                 //setup the finish line coordinate
                 Coordinate f = new Coordinate(finish.get(i).x, finish.get(i).y);
                 setRacer(f);
@@ -171,8 +200,8 @@ public class RTSimulator {
             crashed1 = Line2D.linesIntersect(rxp, ryp, rxpv, rypv, wallx1, wally1, wallx2, wally2);
             crashed2 = Line2D.linesIntersect(rxp, ryp, rxpv, rypv, wallx2, wally1, wallx1, wally2);
             if (crashed1 || crashed2) {
-                System.out.println("crashed yoooooooooo");
                 Coordinate crashSpot = new Coordinate(walls.get(i).x, walls.get(i).y);
+                System.out.println("Crashed");
                 crash(crashSpot); //perform the crash at that wall
                 return true;
             }
@@ -196,7 +225,7 @@ public class RTSimulator {
                 a = new Coordinate(1, 1);
                 break;
             case (4): //S
-                a = new Coordinate(1, 0);
+                a = new Coordinate(0, 1);
                 break;
             case (5): //SW
                 a = new Coordinate(-1, 1);
@@ -207,7 +236,7 @@ public class RTSimulator {
             case (7): //NW
                 a = new Coordinate(-1, -1);
                 break;
-            default:
+            default: //SXSW
                 a = new Coordinate(0, 0);
                 break;
         }
@@ -267,6 +296,9 @@ public class RTSimulator {
                     break;
             }
         }
+        if(a == null){
+            System.out.println("Null");
+        }
         return a;
     }
 
@@ -324,7 +356,7 @@ public class RTSimulator {
     }
 
     public Coordinate spotNearCrash(int x, int y) { //return the closest spot on the track next to the crashsite
-        char[] safe = {'.', 'F', 'S','R'};
+        char[] safe = {'.', 'F', 'S', 'R'};
         ArrayList<Coordinate> list = new ArrayList<>();
         Coordinate spot = null;
 
@@ -385,11 +417,11 @@ public class RTSimulator {
                 }
             } catch (IndexOutOfBoundsException e) {
             }
-        } 
+        }
         Random r = new Random();
         int index = r.nextInt(list.size());
         spot = list.get(index);
-        
+
         return spot;
     }
 

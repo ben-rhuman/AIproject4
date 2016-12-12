@@ -15,19 +15,19 @@ import java.lang.Math;
 public class ValueIteration implements IPolicyAlgorithm {
 
     private char track[][];
-    private double table[][];
-    private Coordinate refPos;
-    private final double chance = 1;
-    private double V = 0;
-    private final double discount = .95;
-    private final double reward = -.1;
-    private final double error = 5;
+    private double table[][]; //Holds each positions V-values
+    private final double chance = .99; //Causes value iteration to take into account walls
+    private double V = 0; //Utility value
+    private final double discount = .95; //Update discount value
+    private final double reward = -.1; //Cost value
+    private int lastX = 0;
+    private int lastY = 0;
 
     public ValueIteration() {
     }
 
     @Override
-    public int ASK(int x, int y) {
+    public int ASK(int x, int y) { //Requests the policy at the given position (x,y)
         int bestX = 0;
         int bestY = 0;
         V = Double.NEGATIVE_INFINITY;
@@ -42,13 +42,24 @@ public class ValueIteration implements IPolicyAlgorithm {
                         bestY = j;
                     }
                 }
+                if (table[x + i][y + j] >= V && lastX == i && lastY == j) { //Promotes continuing in the same direction, so as to increase velocity in a single direction
+                    if (i == 0 && j == 0) {                                 // This smooths out the jumpy movement we were seeing
+                        //Do nothing
+                    } else {
+                        V = table[x + i][y + j];
+                        bestX = i;
+                        bestY = j;
+                    }
+                }
             }
         }
+        lastX = bestX;
+        lastY = bestY;
         return getDirection(bestX, bestY);
     }
 
     @Override
-    public void TELL(char[][] track) {
+    public void TELL(char[][] track) {  //Provides the track and starts the Value Iteration policy creation
         this.track = track;
         table = new double[track.length][track[0].length];
         createTable();
@@ -58,11 +69,7 @@ public class ValueIteration implements IPolicyAlgorithm {
     }
 
     private void createPolicy() {    //Iteratively fills the table with values
-        double U = 0;
-        double U1 = 100;
 
-        //while (Math.abs(U1 - U) < error * ((1 - discount) / discount)) { // Error * 0 amy not be the right equation... -Ben
-        //traversing all positions
         for (int m = 0; m < 100000; m++) {
             for (int g = 0; g < table.length; g++) {
                 for (int h = 0; h < table[0].length; h++) {
@@ -94,19 +101,15 @@ public class ValueIteration implements IPolicyAlgorithm {
                                     if (i == 0 && j == 0) {
                                         //Do nothing
                                     } else {
-                                        V += table[g + i][h + j] * (1 - chance) / 7;
+                                        V += table[g + i][h + j] * (1 - chance) / 7; //Version that takes into account walls
                                     }
                                 }
                             }
                         }
-                        table[g][h] = ((discount * V) + reward);
-                        U += table[g][h];
+                        table[g][h] = ((discount * V) + reward);  // Equation for calculating state utility
                     }
                 }
             }
-            U1 = U;
-            //System.out.println("\n\n\n");
-            //printTable();
         }
         //}
     }

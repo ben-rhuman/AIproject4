@@ -17,13 +17,15 @@ public class Racer{
     public void addAcceleration(int xAccel, int yAccel) { //update the racer's position and velocity
         //check whether the acceleration failed
         boolean succAccel = chance();
-        succAccel = true; ////////////////////////////////
+        //succAccel = true; ////////////////////////////////
         if (!succAccel) { //set acceleration to 0
             xAccel = 0;
             yAccel = 0;
            
+        } else{
+            prevAccel = new Coordinate(xAccel, yAccel);
         }
-        prevAccel = new Coordinate(xAccel, yAccel);
+        
             //check if the acceleration will not go over the maximum or under the minimum
             int tempX = xVelocity + xAccel;
             int tempY = yVelocity + yAccel;
@@ -79,6 +81,6 @@ public class Racer{
     public void printStats(){
         System.out.println("Position: X "+ xPos + " Y " + yPos);
         System.out.println("Velocity: X "+ xVelocity + " Y " + yVelocity);
-        System.out.println("Current Location: " + loc);
+        //System.out.println("Current Location: " + loc);
     }
 }

@@ -35,31 +35,18 @@ public class QLearning implements IPolicyAlgorithm {
     }
 
     @Override
-    public int ASK(int x, int y) { //N = 1; NE = 2; E = 3; SE = 4; S = 5; SW = 6; W = 7; NW = 8
+    public int ASK(int x, int y) { //N = 0; NE = 1; E = 2; SE = 3; S = 4; SW = 5; W = 6; NW = 7
         double maxUtility = Double.NEGATIVE_INFINITY;
         int direction = 0;
         Coordinate next;
         Coordinate current = new Coordinate(y, x);
 
-//        if (track[x][y] == 'S') {
-//            System.out.println("WTF!!!!!");
-//            for (int i = -1; i <= 1; i++) {
-//                for (int j = -1; j <= 1; j++) {
-//                    
-//                    if (track[x + i][y + j] == '.') {
-//                        direction = getDirection(i,j);
-//                        System.out.println("GetDirection: " + direction);
-//                    }
-//                }
-//            }
-//        } else {
             for (int i = 0; i < DIRECTIONS; i++) {
                 next = getNextPosition(i, current);
                 if (QTable[x][y][i] > maxUtility && track[next.y][next.x] != '#') {
                     maxUtility = QTable[x][y][i];
                     direction = i;
                 }
-            //}
         }
         return direction;
     }
@@ -73,7 +60,7 @@ public class QLearning implements IPolicyAlgorithm {
         final long NANOSEC_PER_SEC = 1000l * 1000 * 1000;
 
         long startTime = System.nanoTime();
-        while ((System.nanoTime() - startTime) < 5 * 60 * NANOSEC_PER_SEC) {
+        while ((System.nanoTime() - startTime) < .15 * 60 * NANOSEC_PER_SEC) {
             createPolicy();
         }
 //        loadPolicy();
@@ -213,23 +200,6 @@ public class QLearning implements IPolicyAlgorithm {
         }
         return next;
     }
-//
-//    private void setStartVals() {
-//        double maxUtility;
-//        for (int i = 0; i < track.length; i++) {
-//            for (int j = 0; j < track[i].length; j++) {
-//                if (track[i][j] == 'S') {
-//                    for (int k = -1; k <= 1; k++) {
-//                        for (int m = -1; m <= 1; m++) {
-//                            for (int d = 0; d < DIRECTIONS; d++) {
-//                                QTable[i + k][j + m][d]
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//    }
 
     private void setWalls() {
         for (int i = 0; i < track.length; i++) {
@@ -244,7 +214,7 @@ public class QLearning implements IPolicyAlgorithm {
     }
 
     private void loadPolicy() {
-        String filePath = "r-Track-Policy.txt"; //Creates the file path of the desired data set for windows
+        String filePath = "O-Track-Policy.txt"; //Creates the file path of the desired data set for windows
 
         File file = new File(filePath);
 
